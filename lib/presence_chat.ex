@@ -11,7 +11,9 @@ defmodule PresenceChat do
       # Start the Ecto repository
       supervisor(PresenceChat.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(PresenceChat.Endpoint, [])
+      supervisor(PresenceChat.Endpoint, []),
+      # Start the Phoenix Presence supervisor to manage the presence feature
+      supervisor(PresenceChat.Presence, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
