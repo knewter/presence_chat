@@ -27,6 +27,7 @@ let $messages = $("#messages")
 let $input = $("#message-input")
 let $username = $("#username")
 let $usernameContainer = $("#username-container")
+let $userList = $("#user-list")
 
 $status.hide()
 $messages.hide()
@@ -58,6 +59,33 @@ let initiateChat = (username) => {
   }
 
   let chan = socket.channel("room:lobby", {})
+
+  let presences = {}
+
+  let listBy = (id, {metas: [first, ...rest]}) => {
+    first.name = id
+    first.count = rest.length + 1
+    return first
+  }
+
+  let render = (presences) => {
+    $userList.html(
+      Presence.list(presences, listBy)
+        .map(user => `<li>${user.name} (${user.count}) [${user.device}]</li>`)
+        .join("")
+    )
+  }
+
+  chan.on("presence_state", state => {
+    Presence.syncState(presences, state)
+    render(presences)
+  })
+
+  chan.on("presence_diff", diff => {
+    Presence.syncDiff(presences, diff)
+    render(presences)
+  })
+
   chan.join().receive("ok", () => console.log("join ok"))
              .receive("timeout", () => console.log("Connection interruption"))
   chan.onError(e => console.log("something went wrong", e))
