@@ -77,12 +77,12 @@ let initiateChat = (username) => {
   }
 
   chan.on("presence_state", state => {
-    Presence.syncState(presences, state)
+    presences = Presence.syncState(presences, state)
     render(presences)
   })
 
   chan.on("presence_diff", diff => {
-    Presence.syncDiff(presences, diff)
+    presences = Presence.syncDiff(presences, diff)
     render(presences)
   })
 
